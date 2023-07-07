@@ -67,4 +67,5 @@ esta funcion lo que hace es detectar si tocas el boton de subir o bajar y le sum
 
 # Posibles errores
 Un error que puede aparecer es que las estaciones titles y no se vean bien 
-
+# Link del proyecto
+https://www.tinkercad.com/things/6iLPoC4aHlG-exquisite-luulia/editel?sharecode=I3az5vwl6vtFmlbUhzrvBn60d-ntZz3A5OtXC9_AzSU
