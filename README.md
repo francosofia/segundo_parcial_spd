@@ -59,6 +59,7 @@ esta funcion lo que hace es detectar si tocas el boton de subir o bajar y le sum
     lcd.print("                "); // Borra la segunda fila del display si no se ha seleccionado ninguna estación válida
     digitalWrite(5, LOW);
       }
+       delay(100); // Añade un retardo de 100 ms para reducir el parpadeo
     }
 
 # Diagrama esquematico del circuito
