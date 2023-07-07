@@ -65,6 +65,6 @@ esta funcion lo que hace es detectar si tocas el boton de subir o bajar y le sum
 
 ![Diagrama esquematico del circuito](https://github.com/francosofia/segundo_parcial_spd/assets/108673571/8bacbdb1-83ff-4425-baaf-72abceea1ead)
 
-#Posibles errores
+# Posibles errores
 Un error que puede aparecer es que las estaciones titles y no se vean bien 
 
