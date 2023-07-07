@@ -1,1 +1,161 @@
-int xd
+#include <IRremote.h>
+#include <LiquidCrystal.h>
+#include <Servo.h>
+#define BOTON_SUBIR 0XF50ABF00
+#define BOTON_BAJAR 0xF708BF00
+#define BOTON_APAGADO 0xFF00BF00
+#define IR 11
+//abri las bibliotecas 
+//defino  el boton del control
+//defino el ir
+LiquidCrystal lcd(8, 9, 7, 10, 12, 13); //(rs,e,db4, db5, db6, db7)
+//Crea el objeto lcd con los números correspondientes(rs, e, d4, d5, d6, d7)
+Servo myServo;
+int contador = 0;
+int lecturaSensor;
+int temperatura_dos = 0;
+float temperatura;
+bool flag_boton = false;
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT);
+  Serial.begin(9600);
+  IrReceiver.begin(IR, DISABLE_LED_FEEDBACK);
+   lcd.begin(16, 2);//esos son los maximos por las medidas del lcd
+   myServo.attach(6,500,2500);
+   pinMode(5, OUTPUT);
+  pinMode(4, OUTPUT);
+}
+
+void loop()
+{
+ control();
+  if(flag_boton == true)
+  {
+    control_estaciones();
+    lcd.display();
+     display_lcd();
+    servo_temperatura();
+  }
+  else
+  {
+    lcd.noDisplay();
+     digitalWrite(4, LOW);
+    digitalWrite(5, LOW);
+  }
+}
+
+
+void control()//creo la funcion para encender  y apagar   el sistema 
+{
+  if(IrReceiver.decode()) //Verifico si hay datos para decodificar (si se toco algun boton)
+  {
+    Serial.println(IrReceiver.decodedIRData.decodedRawData, HEX); //Imprimo datos con valor Hexa
+    //flag_boton = false;
+    if(IrReceiver.decodedIRData.decodedRawData == BOTON_APAGADO)
+    {
+      Serial.println("funciona");
+      flag_boton = !flag_boton;
+      
+    }
+    
+    IrReceiver.resume(); //Preparo para recibir un nuevo codigo
+  }
+  delay(100);
+}
+
+
+  //creo una funcion para mostrar por el display  la temperatura y la estacion , se prende la led verde para indicar que la temperatura es normal
+  // en caso de incendios la pantalla muestra fuego
+void display_lcd()
+{
+  lecturaSensor = analogRead(A0);
+  temperatura = map(lecturaSensor, 20, 358, -40, 125);
+
+  lcd.setCursor(0, 0);
+  lcd.print("                "); // Borra la primera fila del display
+  lcd.setCursor(0, 1);
+  lcd.print("                "); // Borra la segunda fila del display
+
+  lcd.setCursor(0, 0);
+  lcd.print(temperatura);
+  lcd.print(" grados ");
+
+  if (temperatura > 60 && temperatura < 125)
+  { 
+    lcd.setCursor(0, 1);
+    lcd.print("ALERTA          ");
+    lcd.setCursor(0, 1);
+    lcd.print("FUEGO DETECTADO");
+  }
+  else
+  {
+    lcd.setCursor(0, 1);
+    lcd.print("                "); // Borra la segunda fila del display si no hay alerta de fuego
+  }
+}
+
+void control_estaciones()
+{
+  if (IrReceiver.decode())//subo o bajo el contador segun que boton toco
+  {
+    if (IrReceiver.decodedIRData.decodedRawData == BOTON_SUBIR)
+    {
+      Serial.println("sube");
+      contador += 1;
+    }
+    if (IrReceiver.decodedIRData.decodedRawData == BOTON_BAJAR)
+    {
+      Serial.println("baja");
+      contador -= 1;
+    }
+    IrReceiver.resume();
+  }
+
+  Serial.println(contador);
+
+  if (contador >= 1 && contador <= 4)
+  {
+    lcd.setCursor(0, 1);
+    digitalWrite(5, HIGH);
+
+    switch (contador)
+    {
+      case 1://pongo la estacion segun el caso dado
+        lcd.print("invierno      ");
+        break;
+      case 2:
+        lcd.print("otonio        ");
+        break;
+      case 3:
+        lcd.print("primavera     ");
+        break;
+      case 4:
+        lcd.print("verano        ");
+        break;
+    }
+  }
+  else
+  {
+    lcd.setCursor(0, 1);
+    lcd.print("                "); // Borra la segunda fila del display si no se ha seleccionado ninguna estación válida
+    digitalWrite(5, LOW);
+  }
+}
+
+void servo_temperatura()
+  //creo una funcion para para simular
+  //una respuesta del sistema de incendio y prendere la led roja indicando que hay poeligro
+{
+  if( temperatura>60)
+ {
+    myServo.write(0);
+     digitalWrite(4, HIGH);
+
+    delay(1000);
+    myServo.write(180);
+     digitalWrite(4, LOW);
+    delay(1000);
+ }
+}
+
