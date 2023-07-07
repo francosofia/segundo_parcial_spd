@@ -1,4 +1,4 @@
-# primer_parcial_spd
+# segundo_parcial_spd
 
 # Integrantes
 Franco Sofia
