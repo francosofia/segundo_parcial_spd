@@ -1,7 +1,7 @@
-#include <IRremote.h>
-#include <LiquidCrystal.h>
-#include <Servo.h>
-#define BOTON_SUBIR 0XF50ABF00
+ #include <IRremote.h>
+ #include <LiquidCrystal.h>
+   #include <Servo.h>
+  #define BOTON_SUBIR 0XF50ABF00
 #define BOTON_BAJAR 0xF708BF00
 #define BOTON_APAGADO 0xFF00BF00
 #define IR 11
@@ -95,9 +95,11 @@ void display_lcd()
   }
 }
 
+
 void control_estaciones()
 {
   if (IrReceiver.decode())//subo o bajo el contador segun que boton toco
+  {
   {
     if (IrReceiver.decodedIRData.decodedRawData == BOTON_SUBIR)
     {
@@ -114,48 +116,50 @@ void control_estaciones()
 
   Serial.println(contador);
 
+//limito el contador
+
+  lcd.setCursor(0, 1);
   if (contador >= 1 && contador <= 4)
   {
-    lcd.setCursor(0, 1);
     digitalWrite(5, HIGH);
 
     switch (contador)
     {
-      case 1://pongo la estacion segun el caso dado
-        lcd.print("invierno      ");
+      case 1://Entra a la estacion segun el caso
+        lcd.print("Invierno      ");
         break;
       case 2:
-        lcd.print("otonio        ");
+        lcd.print("Otonio        ");
         break;
       case 3:
-        lcd.print("primavera     ");
+        lcd.print("Primavera     ");
         break;
       case 4:
-        lcd.print("verano        ");
+        lcd.print("Verano        ");
         break;
     }
   }
   else
   {
-    lcd.setCursor(0, 1);
     lcd.print("                "); // Borra la segunda fila del display si no se ha seleccionado ninguna estación válida
     digitalWrite(5, LOW);
   }
+
+  delay(100); // Añade un retardo de 100 ms para reducir el parpadeo
 }
 
 void servo_temperatura()
-  //creo una funcion para para simular
+   //creo una funcion para para simular
   //una respuesta del sistema de incendio y prendere la led roja indicando que hay poeligro
-{
-  if( temperatura>60)
- {
-    myServo.write(0);
-     digitalWrite(4, HIGH);
-
-    delay(1000);
-    myServo.write(180);
-     digitalWrite(4, LOW);
-    delay(1000);
+  {
+   if( temperatura>60)
+  {
+     myServo.write(0);
+  digitalWrite(4, HIGH);
+     delay(1000);
+      myServo.write(180);
+      digitalWrite(4, LOW);
+     delay(1000);
+  }
  }
-}
 
